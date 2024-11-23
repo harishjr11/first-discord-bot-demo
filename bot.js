@@ -167,7 +167,7 @@ client.on('messageCreate', async (message) => {
       if (aiResponse) {
         return message.reply(aiResponse);
       } else {
-        return message.reply('I received an empty response. Please try again later.');
+        return message.reply('I received an empty response. Please try again later brother.');
       }
     } catch (error) {
       console.error('Error processing message:', error);
