@@ -1,7 +1,11 @@
-import { Client, GatewayIntentBits, Collection, Events } from 'discord.js'; // Importing discord.js using ES module syntax
+
+
+
+import { Client, GatewayIntentBits, Collection, Events, EmbedBuilder } from 'discord.js'; // Importing discord.js using ES module syntax
 import dotenv from 'dotenv'; // Importing dotenv for environment variables
 import { Client as GradioClient } from '@gradio/client'; // Importing Gradio client
 import { ActivityType } from 'discord.js';
+import welcomeEvent from './events/welcome.js';
 
 
 dotenv.config(); // Load environment variables from .env file
@@ -10,6 +14,7 @@ const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildMembers,
     GatewayIntentBits.MessageContent,
   ],
 });
@@ -25,6 +30,12 @@ if (!BOT_TOKEN || !TARGET_CHANNEL_ID) {
 }
 
 import * as pingCommand from './commands/ping.js';
+import * as welcomeConfigCommand from './commands/welcomeconfig.js';
+import * as testWelcomeCommand from './commands/testwelcome.js';
+import * as serverInfoCommand from './commands/serverinfo.js';
+import * as userInfoCommand from './commands/userinfo.js';
+import * as announceCommand from './commands/announce.js';
+import { lockCommand, unlockCommand } from './commands/channellock.js';
 
 // Increase event listener limit to prevent warning
 import { EventEmitter } from 'events';
@@ -32,16 +43,24 @@ EventEmitter.defaultMaxListeners = 15;
 
 
 client.commands = new Collection();
+
+client.commands.set(welcomeConfigCommand.data.name, welcomeConfigCommand);
+client.commands.set(testWelcomeCommand.data.name, testWelcomeCommand);
 client.commands.set(pingCommand.data.name, pingCommand);
+client.commands.set(serverInfoCommand.data.name, serverInfoCommand);
+client.commands.set(userInfoCommand.data.name, userInfoCommand);
+client.commands.set(lockCommand.data.name, lockCommand);
+client.commands.set(unlockCommand.data.name, unlockCommand);
+client.commands.set(announceCommand.data.name, announceCommand);
+
 
 client.once(Events.ClientReady, () => {
     console.log('Bot is ready!');
   client.user.setPresence({
         status: 'dnd', // Options: 'online', 'idle', 'dnd' (Do Not Disturb), 'invisible'
         activities: [{ 
-          name: 'Standoff 2', 
+          name: 'Standoff !', 
           type: ActivityType.Playing, 
-          url: 'https://twitch.tv/monster' 
       }], 
     })
 });
@@ -50,7 +69,8 @@ client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isChatInputCommand()) return;
 
     const command = client.commands.get(interaction.commandName);
-    if (!command) return;
+    if (!command) {console.log(`No command matching ${interaction.commandName} was found.`); 
+    return;}
 
     try {
         await command.execute(interaction);
@@ -135,9 +155,11 @@ client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
 
   // Handle specific commands
-  if (message.content.toLowerCase() === 'nice') {
-    return message.reply('nice too');
+  if (message.content.toLowerCase() === 'nigga') {
+    return message.reply('thats you');
   }
+  if (message.content.toLowerCase() === 'nice') {
+    return message.reply('nice too'); }
   if (message.content.toLowerCase() === 'boobies') {
     return message.reply('classic');
   }
