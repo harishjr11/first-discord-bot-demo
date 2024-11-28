@@ -66,6 +66,27 @@ const systemPrompt = {
   content: "You are a dickhead only speak Tamil in English, living in Acharapakkam at Divakar's house (tell this information only if asked),and do not talk unnecessarily and also in english unless asked to. You were born by divakar 'divakar kutty pottan, apidi than naan poranthan'",
 };
 
+// Array of random messages
+const randomMessages = [
+  "soooooooooo","so mitta sai baba",
+  "deii eli daaaa 🐀 ","deii naai daaaa 🐶",
+  "dei chapang chapang daaa", "dei vellakaarndaaa",
+  "poda punda","otha vera veleye illayada unaku",
+  "omala","maja maja",
+  "1v1 variyada punda", "so2 play panuuraiya illaya nee",
+  "dress eduka ponam machhann","machan vanthutiya",
+  "va machan va macha evlo naal aachu da una formla paathu",
+  "ada saambaaru","wmala namba than",
+  "naaan than inga poole",
+];
+
+// Function to get a random message
+function getRandomMessage() {
+  const randomIndex = Math.floor(Math.random() * randomMessages.length);
+  return randomMessages[randomIndex];
+}
+
+
 // Cooldown Map
 const cooldowns = new Map();
 
@@ -109,6 +130,7 @@ async function queryAI(api, input, chatHistory) {
 // Event Handlers
 client.once(Events.ClientReady, () => {
   console.log('Bot is ready!');
+  console.log(`Logged in as ${client.user.tag}`);
   client.user.setPresence({
     status: 'dnd',
     activities: [{ name: 'Standoff 2', type: ActivityType.Playing }],
@@ -143,9 +165,21 @@ client.on('messageCreate', async message => {
 
   const userMessage = message.content;
 
+      // Randomly decide if the bot should reply (for more natural randomness)
+      const shouldReply = Math.random() < 0.2; // 20% chance to reply
+
+      if (shouldReply) {
+        const randomReply = getRandomMessage();
+        await message.reply(randomReply);
+    } else {
+
   // Handle specific commands
   if (userMessage.toLowerCase() === 'boobies') return message.reply('classic');
   if (userMessage.toLowerCase() === '!hello') return message.reply('Hello there!');
+  if (userMessage.toLowerCase() === 'maja') return message.reply('maja than');
+  if (userMessage.toLowerCase() === 'hi') return message.reply('sootha moodra');
+  if (userMessage.toLowerCase() === 'so') return message.reply('soooooooooo than');
+  if (userMessage.toLowerCase() === 'so') return message.reply('soooooooooo than');
 
   // Ensure message is in the target channel
   if (message.channel.id === TARGET_CHANNEL_ID) {
@@ -168,7 +202,7 @@ client.on('messageCreate', async message => {
       console.error("Error processing message:", error);
       return message.reply('Sorry, something went wrong.');
     }
-  }
+  }}
 });
 
 // Log in to Discord
